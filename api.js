@@ -60,7 +60,6 @@ console.log(accessToken)
         'x-access-token': accessToken ? `Bearer ${accessToken}` : ''
       }
     });
-
     return forward(operation);
   }
 
@@ -96,10 +95,21 @@ console.log(accessToken)
   );
 });
 
+const defaultOptions = {
+  watchQuery: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'ignore',
+  },
+  query: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  },
+};
 
 export const client = new ApolloClient({
   link: from([authLink, httpLink]),
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  defaultOptions: defaultOptions
 });
 
 
@@ -379,7 +389,7 @@ export const searchProfiles = gql`
   }
 `
 
-export const HasTxHashBeenIndexed = 
+export const HasTxHashBeenIndexedDocument = 
 gql`query HasTxHashBeenIndexed($request: HasTxHashBeenIndexedRequest!) {
   hasTxHashBeenIndexed(request: $request) {
     ... on TransactionIndexedResult {
@@ -393,34 +403,74 @@ gql`query HasTxHashBeenIndexed($request: HasTxHashBeenIndexedRequest!) {
 }`
 
 export const CreatePostTypedDataDocument = gql`
-  mutation CreatePostTypedData($options: TypedDataOptions, $request: CreatePublicPostRequest!) {
-    createPostTypedData(options: $options, request: $request) {
-      id
-      expiresAt
-      typedData {
-        types {
-          PostWithSig {
-            name
-            type
-          }
-        }
-        domain {
+  mutation CreatePostTypedData($request: CreatePublicPostRequest!) {
+    createPostTypedData(request: $request) {
+    id
+    expiresAt
+    typedData {
+      types {
+        PostWithSig {
           name
-          chainId
-          version
-          verifyingContract
+          type
         }
-        value {
-          nonce
-          deadline
-          profileId
-          contentURI
-          collectModule
-          collectModuleInitData
-          referenceModule
-          referenceModuleInitData
-        }
+      }
+      domain {
+        name
+        chainId
+        version
+        verifyingContract
+      }
+      value {
+        nonce
+        deadline
+        profileId
+        contentURI
+        collectModule
+        collectModuleInitData
+        referenceModule
+        referenceModuleInitData
       }
     }
   }
-`;
+}`;
+
+
+// mutation CreatePostTypedData {
+//   createPostTypedData(request: {
+//     profileId: "0x03",
+//     contentURI: "ipfs://QmPogtffEF3oAbKERsoR4Ky8aTvLgBF5totp5AuF8YN6vl",
+//     collectModule: {
+//       revertCollectModule: true
+//     },
+//     referenceModule: {
+//       followerOnlyReferenceModule: false
+//     }
+//   }) {
+//     id
+//     expiresAt
+//     typedData {
+//       types {
+//         PostWithSig {
+//           name
+//           type
+//         }
+//       }
+//       domain {
+//         name
+//         chainId
+//         version
+//         verifyingContract
+//       }
+//       value {
+//         nonce
+//         deadline
+//         profileId
+//         contentURI
+//         collectModule
+//         collectModuleInitData
+//         referenceModule
+//         referenceModuleInitData
+//       }
+//     }
+//   }
+// }

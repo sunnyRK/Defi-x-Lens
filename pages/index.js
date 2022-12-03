@@ -175,7 +175,7 @@ export default function Home() {
               )
             }
             {
-              address && token && <p style={{color: "white", padding: "10px"}}>Successfully signed in!</p>
+              address && token && <p style={{color: "white", backgroundColor:"blue", padding: "10px", marginRight: "10px"}}>Successfully signed in!</p>
             }
           </li>
         </ul>
