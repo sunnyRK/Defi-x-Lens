@@ -26,6 +26,7 @@ export default function Profile() {
     <div style={{margin: '50px'}}>
         <div style={{marginBottom: '10px'}}>
         <ul>
+        <li><div onClick={changePageHome}><b>DefiLens</b></div></li>
         <li><div onClick={changePageHome}>Home</div></li>
           <li><div onClick={changePageGraph}>Graph Data</div></li>
           <li><div onClick={changePageProfile}>Profile</div></li>

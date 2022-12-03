@@ -77,7 +77,7 @@ export default function GraphFeed() {
         external_url: null,
         image: null,
         imageMimeType: null,
-        name: "Name",
+        name: "Comment by sunnyrk.lens}",
         animation_url: null,
         contentWarning: null,
         attributes: [
@@ -87,7 +87,7 @@ export default function GraphFeed() {
             //     value: "sunny"        
             // }
         ],
-        // tags: ["using_api_examples"],
+        tags: ["using_api_examples"],
         appId: "DefiLens",
         createdOn: new Date(),
         media: [],
@@ -388,7 +388,7 @@ export default function GraphFeed() {
       },
       fetchPolicy: 'network-only',
     });
-    
+
     console.log('HasTxHashBeenIndexed: ', hasTxHashBeenIndexed);
     console.log(`successfully posted on lens`)
     } catch (err) {
@@ -465,6 +465,7 @@ export default function GraphFeed() {
     <div style={{margin: '50px'}}>
         <div style={{marginBottom: '10px'}}>
         <ul>
+        <li><div onClick={changePageHome}><b>DefiLens</b></div></li>
         <li><div onClick={changePageHome}>Home</div></li>
           <li><div onClick={changePageGraph}>Graph Data</div></li>
           <li><div onClick={changePageProfile}>Profile</div></li>

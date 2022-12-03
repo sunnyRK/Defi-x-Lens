@@ -17,6 +17,10 @@
 2). The Graph existing subgraphs  
 3). Smart Contract Wallets from Biconomy  
 
+### Biconomy SCW used for perform batch txs to post data on Lens
+- (`0x2333d2a01526265e4608b8c598BF9a9b65c66F19`) This is the smart wallet address on Polygon mainnet
+### the graph protocol used for past tx to get of defi protocols.
+
 ### Tech USED
 
 1). Solidity  

@@ -127,7 +127,6 @@ export default function Home() {
   //   }
   // }
 
-
   // function getSigner() {
   //   const provider = new ethers.providers.Web3Provider(window.ethereum)
   //   return provider.getSigner();
@@ -160,6 +159,7 @@ export default function Home() {
     <div>
       <div>
         <ul>
+          <li><div onClick={changePageHome}><b>DefiLens</b></div></li>
           <li><div onClick={changePageHome}>Home</div></li>
           <li><div onClick={changePageGraph}>Graph Data</div></li>
           <li><div onClick={changePageProfile}>Profile</div></li>
@@ -180,6 +180,31 @@ export default function Home() {
           </li>
         </ul>
       </div>
+
+      <div style={{margin: '10px'}}>
+           {
+            //  publications.map((publication, index) => (
+              //  <Link href={`/profile/${profile.id}`} key={index}>
+              //    <a>
+              //      {
+              //        profile.picture &&  profile.picture.original? (
+              //          <Image
+              //            src={profile.picture.original && profile.picture.original.url}
+              //            width="202px"
+              //            height="202px"
+              //          />
+              //          // <h2>Image </h2>
+              //        ) : <div style={blankPhotoStyle} />
+              //      }
+              //      <h3>{profile.handle}</h3>
+              //      <p >{profile.publication?.metadata.content}</p>
+              //      <hr></hr>
+              //    </a>
+              //  </Link>
+            //  ))
+           }
+     </div> 
+
     </div>
     // <div style={{margin: '50px'}}>
     //     <button onClick={getAaveData} >getdata</button>
