@@ -285,6 +285,7 @@ export const getPublications = gql`
   }
   fragment PostFields on Post {
     id
+    appId
     metadata {
       ...MetadataOutputFields
     }

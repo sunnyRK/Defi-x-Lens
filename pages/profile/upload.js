@@ -118,8 +118,13 @@ export default function Home() {
     }
 
     const file = files[0];
+
+    const data = {
+      name: "sunny"
+    }
+    
     // upload files
-    const result = await (ipfs).add(file);
+    const result = await (ipfs).add(JSON.stringify(data));
     console.log('result: ', result.path);
 
     // const uniquePaths = new Set([
@@ -184,7 +189,7 @@ export default function Home() {
             <form onSubmit={onSubmitHandler}>
               <input name="file" type="file" />
 
-              <button type="submit">Upload File</button>
+              <button type="submit">Upload File on IPFS</button>
             </form>
 
             <div>

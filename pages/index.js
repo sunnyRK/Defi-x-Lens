@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { client, getPublications, getProfiles } from '../api'
+import { client, getPublications, getProfiles } from './external/api'
 import { AAVE_DEPOSIT }  from './external/query.js';
 import { createClient } from 'urql'
 import { MainContext } from '../context';
@@ -58,7 +58,8 @@ export default function Home() {
           variables: {request: {
             profileIds: userLensIdHex,
             publicationTypes: ['POST'],
-            limit: 50
+            limit: 50,
+            sources: "defilens"
           }}
         });
   
@@ -67,6 +68,7 @@ export default function Home() {
 
       setProfile(profileData)
       setPublications(pubs.data.publications.items)
+      console.log('pubs+++++++', pubs.data.publications.items[0].metadata.attributes[0].value);
 
       console.log('Address: ', address);
       console.log('profileData: ', profileData);
@@ -183,25 +185,20 @@ export default function Home() {
 
       <div style={{margin: '10px'}}>
            {
-            //  publications.map((publication, index) => (
+             publications.map((publication, index) => (
               //  <Link href={`/profile/${profile.id}`} key={index}>
-              //    <a>
-              //      {
-              //        profile.picture &&  profile.picture.original? (
-              //          <Image
-              //            src={profile.picture.original && profile.picture.original.url}
-              //            width="202px"
-              //            height="202px"
-              //          />
-              //          // <h2>Image </h2>
-              //        ) : <div style={blankPhotoStyle} />
-              //      }
-              //      <h3>{profile.handle}</h3>
-              //      <p >{profile.publication?.metadata.content}</p>
-              //      <hr></hr>
-              //    </a>
-              //  </Link>
-            //  ))
+              
+                <div>
+                  <h3>{publication.metadata.attributes[0].value}</h3>
+                  {/* <p >{publication.metadata.attributes[1].value}</p>
+                  <p >{publication.metadata.attributes[2].value}</p>
+                  <p >{publication.metadata.attributes[3].value}</p>
+                  <p >{publication.metadata.attributes[4].value}</p>
+                  <p >{publication.metadata.attributes[5].value}</p> */}
+                  <button>Apply for Lens</button>
+                </div>
+              
+             ))
            }
      </div> 
 
@@ -237,15 +234,15 @@ export default function Home() {
     //                   // <h2>Image </h2>
     //                 ) : <div style={blankPhotoStyle} />
     //               } */}
-    //               <h3>{deposit.id}</h3>
-    //               <p >{deposit.amount}</p>
-    //               <p >{deposit.user.id}</p>
-    //               <p >{deposit.reserve.id}</p>
-    //               <p >{deposit.reserve.symbol}</p>
-    //               <p >{deposit.reserve.name}</p>
-    //               <p >{deposit.reserve.decimals}</p>
-    //               <p >{deposit.reserve.price}</p>
-    //               <button>Apply for Lens</button>
+                  // <h3>{deposit.id}</h3>
+                  // <p >{deposit.amount}</p>
+                  // <p >{deposit.user.id}</p>
+                  // <p >{deposit.reserve.id}</p>
+                  // <p >{deposit.reserve.symbol}</p>
+                  // <p >{deposit.reserve.name}</p>
+                  // <p >{deposit.reserve.decimals}</p>
+                  // <p >{deposit.reserve.price}</p>
+                  // <button>Apply for Lens</button>
     //               <hr></hr>
     //             </a>
     //           // </Link>

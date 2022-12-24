@@ -7,7 +7,7 @@ import { useState, useRef } from 'react'
 import { providers, utils, ethers } from 'ethers'
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { client, DefaultProfile } from '../api.js'
+import { client, DefaultProfile } from './external/api.js'
 import BigNumber from 'bignumber.js'
 import { ApolloProvider } from '@apollo/client';
 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { client, DefaultProfile, getPublications, searchProfiles, HasTxHashBeenIndexedDocument, CreatePostTypedDataDocument } from '../../api'
+import { client, DefaultProfile, getPublications, searchProfiles, HasTxHashBeenIndexedDocument, CreatePostTypedDataDocument } from '../external/api'
 import { AAVE_DEPOSIT }  from '../external/query.js';
 import { createClient } from 'urql'
 import { MainContext } from '../../context.js'
@@ -12,6 +12,7 @@ import SCWAbi from '../../ABIs/SCW.json'
 import { gql, useMutation } from '@apollo/client';
 import { getAddressFromSigner, signedTypeData, splitSignature } from './ethers.service';
 import axios from 'axios';
+import { create, CID, IPFSHTTPClient } from "ipfs-http-client";
 
 import { v4 as uuid } from 'uuid';
 
@@ -26,6 +27,23 @@ import {
     ARWEAVE_URI,
     Smart_Contract_Wallet
 } from '../constants';
+
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
+const projectSecret = process.env.NEXT_PUBLIC_PROJECT_SECRET;
+console.log('projectId: ', projectId, projectSecret)
+const authorization = "Basic " + btoa(projectId + ":" + projectSecret);
+let ipfs
+try {
+    ipfs = create({
+    url: "https://ipfs.infura.io:5001",
+    headers: {
+        authorization,
+    },
+    });
+} catch (error) {
+    console.error("IPFS error ", error);
+    ipfs = undefined;
+}
 
 export default function GraphFeed() {
   const [deposits, setAaveDeposits] = useState([])
@@ -50,6 +68,54 @@ export default function GraphFeed() {
     }
   }
 
+  const onSubmitHandler = async (event) => {
+    event.preventDefault();
+
+
+    // setIpfs(ipfsInst);
+    // console.log('ipfsInst:', ipfsInst);
+
+
+    // const form = event.target;
+    // const files = (form[0]).files;
+
+    // if (!files || files.length === 0) {
+    //   return alert("No files selected");
+    // }
+
+    // const file = files[0];
+
+    const data = {
+      name: "sunny"
+    }
+    
+    // upload files
+    const result = await (ipfs).add(JSON.stringify(data));
+    console.log('result: ', result.path);
+
+    // const uniquePaths = new Set([
+    //   ...images.map((image) => image.path),
+    //   result.path,
+    // ]);
+    // const uniqueImages = [...uniquePaths.values()]
+    //   .map((path) => {
+    //     return [
+    //       ...images,
+    //       {
+    //         cid: result.cid,
+    //         path: result.path,
+    //       },
+    //     ].find((image) => image.path === path);
+    //   });
+
+    //   console.log('uniqueImages: ', uniqueImages);
+
+      // @ts-ignore
+    setImages([result.path, ...images]);
+
+    form.reset();
+  };
+
   async function uploadText(deposit) {   
     // const data = {
     //   "tx": `{${POLYGONSCAN_MAINNET}${deposit.id.split(":")[2]}}`,
@@ -67,25 +133,83 @@ export default function GraphFeed() {
             
     const textOnly = 'TEXT_ONLY'
 
+  //   const data = {
+  //     "version":"2.0.0",
+  //     "metadata_id":"f78cf65a-f345-4139-9dcf-2fbff569176d",
+  //     "description":"Hey lensters",
+  //     "content":"Hey lensters",
+  //     "external_url":"https://lenster.xyz/u/sunnyrk.lens",
+  //     "image":"ipfs://bafkreigk4italo6s75w6dvoyheszz6syycjtlkq47ichol4agyorddrptu",
+  //     "imageMimeType":"image/svg+xml",
+  //     "name":"Comment by @sunnyrk.lens",
+  //     "tags":[],
+  //     "animation_url":null,
+  //     "mainContentFocus":"TEXT_ONLY",
+  //     "contentWarning":null,
+  //     "attributes":[
+  //        {
+  //           "traitType":"type",
+  //           "displayType":"string",
+  //           "value":"text_only"
+  //        }
+  //     ],
+  //     "media":[],
+  //     "locale":"en-GB",
+  //     "createdOn":"2022-11-28T19:54:46.165Z",
+  //     "appId":"Lenster"
+  //  }
+
+  const attachment = {
+    
+    type: null,
+    altTag: null
+  };
+  // setAttachments([...attachments, attachment]);
+
     const data = {
         version: "2.0.0",
         mainContentFocus: textOnly,
         metadata_id: uuid(),
-        description: "Sunny",
+        description: "DefiLens socialgraph for Defi",
         locale: "en-US",
-        content: "Sunny2.",
+        content: "AAVE Deposit",
         external_url: null,
-        image: null,
+        image: "https://lens.infura-ipfs.io/ipfs/QmXHYGS1qCTN14XG665ZWV4iknyo6WUeFYw6RfE3QgCijP",
         imageMimeType: null,
-        name: "Comment by sunnyrk.lens}",
+        name: "Comment by sunnyrk.lens",
         animation_url: null,
         contentWarning: null,
         attributes: [
-            // {    
-            //     traitType: "tx",
-            //     displayType: "string",
-            //     value: "sunny"        
-            // }
+            {    
+                traitType: "Polygon Tx",
+                displayType: "string",
+                value: deposit.id 
+            },
+            {    
+              traitType: "Amount",
+              displayType: "string",
+              value: deposit.amount 
+            },
+            {    
+              traitType: "User Address",
+              displayType: "string",
+              value: deposit.user.id 
+            },
+            {    
+                traitType: "Token Symbol",
+                displayType: "string",
+                value: deposit.reserve.symbol 
+            },
+            {    
+              traitType: "Token Name",
+              displayType: "string",
+              value: deposit.reserve.name 
+            },
+            {    
+              traitType: "Token Price",
+              displayType: "string",
+              value: deposit.reserve.price 
+            }
         ],
         tags: ["using_api_examples"],
         appId: "DefiLens",
@@ -93,19 +217,47 @@ export default function GraphFeed() {
         media: [],
       }
 
+  //   const data = {
+  //     version:"2.0.0",
+  //     metadata_id:"f78cf65a-f345-4139-9dcf-2fbff569176d",
+  //     description:"Hey lensters",
+  //     content:"Hey lensters",
+  //     external_url:"https://lenster.xyz/u/sunnyrk.lens",
+  //     image:"ipfs://bafkreigk4italo6s75w6dvoyheszz6syycjtlkq47ichol4agyorddrptu",
+  //     imageMimeType:"image/svg+xml",
+  //     name:"Comment by @sunnyrk.lens",
+  //     tags:[],
+  //     animation_url:null,
+  //     mainContentFocus:"TEXT_ONLY",
+  //     contentWarning:null,
+  //     attributes:[
+  //        {
+  //           traitType:"type",
+  //           displayType:"string",
+  //           value:"text_only"
+  //        }
+  //     ],
+  //     media:[
+         
+  //     ],
+  //     locale:"en-GB",
+  //     createdOn:"2022-11-28T19:54:46.165Z",
+  //     appId:"Lenster"
+  //  }
 
-      const SERVERLESS_MAINNET_API_URL = 'https://api.lenster.xyz';
 
-      const upload = await axios(`${SERVERLESS_MAINNET_API_URL}/metadata/upload`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        data
-      });
+      // const SERVERLESS_MAINNET_API_URL = 'https://api.lenster.xyz';
+
+      // const upload = await axios(`${SERVERLESS_MAINNET_API_URL}/metadata/upload`, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   data
+      // });
   
-      const uploadData = upload?.data;
-      console.log('uploadData: ', uploadData);
+      // const uploadData = upload?.data;
+      // console.log('uploadData: ', uploadData);
   
     // console.log('bundlrInstance: ', bundlrInstance);
     // const tx = bundlrInstance.createTransaction(JSON.stringify(data))
@@ -116,7 +268,17 @@ export default function GraphFeed() {
     // const result = await tx.upload()
     // console.log('${ARWEAVE_URI}${tx.id}: ', `${ARWEAVE_URI}${tx.id}`);
     // console.log(`successfully posted on Arweave`);
-    return `${ARWEAVE_URI}${uploadData.id}`;
+    // return `${ARWEAVE_URI}${id}`;
+
+    // const data2 = {
+    //   name: "sunny"
+    // }
+    
+    // upload files
+    const result = await (ipfs).add(JSON.stringify(data));
+    console.log('result: ', result.path);
+    return `https://ipfs.io/ipfs/${result.path}`
+
   }
 
   async function uploadFile() {    
@@ -222,6 +384,7 @@ export default function GraphFeed() {
     const createPostRequest = {
       profileId: userLensIdHex,
       contentURI: uri.toString(),
+      // contentURI: 'https://arweave.net/kd1_TezRuhFlxxchvA8Sfa0TVFjXUxRjy2d6-MjItmI',
       collectModule: {
         freeCollectModule: { followerOnly: true },
       },
@@ -417,6 +580,7 @@ export default function GraphFeed() {
       const tx = await contract.post({
         profileId: userLensId,
         contentURI: uri,
+        // contentURI: "https://arweave.net/kd1_TezRuhFlxxchvA8Sfa0TVFjXUxRjy2d6-MjItmI",
         collectModule: Collect_Module,
         collectModuleInitData: ZERO_BYTES,
         referenceModule: Reference_Module,
@@ -510,7 +674,9 @@ export default function GraphFeed() {
                 <p>{deposit.reserve.name}</p>
                 <p>{deposit.reserve.decimals}</p>
                 <p>{deposit.reserve.price}</p>
-                <button onClick={() => postWithSCW(deposit)}>Apply for Lens</button>
+                {/* <button onClick={() => postWithSCW(deposit)}>Apply for Lens using SCW</button> */}
+                <button onClick={() => postWithSCWWithTypeData(deposit)}>Apply for Lens</button>
+
             </div>
 
 
